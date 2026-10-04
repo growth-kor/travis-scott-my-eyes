@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MY EYES — Travis Scott</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 24px;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .brand {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #666666;
+      font-weight: 600;
+    }
+    .loop-tag {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid #333333;
+      border-radius: 4px;
+      color: #ffffff;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .loop-tag.off {
+      color: #555555;
+      border-color: #222222;
+    }
+    .main-content {
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+    .track-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .track-title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+    .track-artist {
+      font-size: 15px;
+      color: #888888;
+      letter-spacing: -0.01em;
+    }
+    .timeline-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .time-digits {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: #555555;
+    }
+    .progress-track {
+      width: 100%;
+      height: 2px;
+      background: #222222;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #ffffff;
+      width: 0%;
+      pointer-events: none;
+    }
+    .controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+    }
+    .play-btn {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .play-btn:active {
+      transform: scale(0.95);
+    }
+    .play-btn svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+    .rate-selector {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #111111;
+      border: 1px solid #222222;
+      border-radius: 6px;
+      padding: 3px;
+    }
+    .rate-btn {
+      background: transparent;
+      border: none;
+      color: #666666;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: ui-monospace, monospace;
+    }
+    .rate-btn:hover {
+      color: #aaaaaa;
+    }
+    .rate-btn.active {
+      background: #222222;
+      color: #ffffff;
+    }
+    .rate-slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 4px;
+    }
+    .slider-label {
+      font-size: 11px;
+      color: #444444;
+      font-family: ui-monospace, monospace;
+      width: 38px;
+    }
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 2px;
+      background: #222222;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ffffff;
+      cursor: pointer;
+    }
+    .bottom-bar {
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #444444;
+      border-top: 1px solid #141414;
+      padding-top: 20px;
+    }
+    .bottom-bar a {
+      color: #666666;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .bottom-bar a:hover {
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <span class="brand">Loop Machine</span>
+    <button class="loop-tag" id="btn-loop-mode" onclick="toggleLoop()">Repeat ∞</button>
+  </div>
+
+  <div class="main-content">
+    <div class="track-meta">
+      <h1 class="track-title">MY EYES</h1>
+      <p class="track-artist">Travis Scott — Beat Drop Extended Edit</p>
+    </div>
+
+    <!-- Hidden Native Audio -->
+    <audio id="audio" loop preload="auto" src="audio.m4a"></audio>
+
+    <div class="timeline-wrap">
+      <div class="progress-track" id="track-bar" onclick="seekClick(event)">
+        <div class="progress-fill" id="fill-bar"></div>
+      </div>
+      <div class="time-digits">
+        <span id="t-cur">0:00</span>
+        <span id="t-dur">0:00</span>
+      </div>
+    </div>
+
+    <div class="controls-row">
+      <button class="play-btn" id="play-trigger" onclick="togglePlay()" aria-label="Play">
+        <svg id="svg-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+        <svg id="svg-pause" viewBox="0 0 24 24" style="display: none;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+      </button>
+
+      <div class="rate-selector">
+        <button class="rate-btn" onclick="applyRate(0.75)">0.75</button>
+        <button class="rate-btn active" onclick="applyRate(1.0)">1.0</button>
+        <button class="rate-btn" onclick="applyRate(1.25)">1.25</button>
+        <button class="rate-btn" onclick="applyRate(1.5)">1.5</button>
+        <button class="rate-btn" onclick="applyRate(2.0)">2.0</button>
+      </div>
+    </div>
+
+    <div class="rate-slider-wrap">
+      <span class="slider-label" id="rate-readout">1.00x</span>
+      <input type="range" id="fine-slider" min="0.5" max="2.0" step="0.05" value="1.0" oninput="applyRate(this.value)">
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <span>Fair-use Personal Practice Tool</span>
+    <a href="https://www.youtube.com/watch?v=pxwm3sqAytE" target="_blank" rel="noreferrer">Original YouTube ↗</a>
+  </div>
+
+  <script>
+    const audio = document.getElementById('audio');
+    const playTrigger = document.getElementById('play-trigger');
+    const svgPlay = document.getElementById('svg-play');
+    const svgPause = document.getElementById('svg-pause');
+    const fillBar = document.getElementById('fill-bar');
+    const trackBar = document.getElementById('track-bar');
+    const tCur = document.getElementById('t-cur');
+    const tDur = document.getElementById('t-dur');
+    const loopBtn = document.getElementById('btn-loop-mode');
+    const rateReadout = document.getElementById('rate-readout');
+    const fineSlider = document.getElementById('fine-slider');
+
+    function fmt(s) {
+      if (isNaN(s)) return "0:00";
+      const m = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return `${m}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    audio.addEventListener('loadedmetadata', () => {
+      tDur.innerText = fmt(audio.duration);
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      if (!isNaN(audio.duration) && audio.duration > 0) {
+        const pct = (audio.currentTime / audio.duration) * 100;
+        fillBar.style.width = pct + '%';
+        tCur.innerText = fmt(audio.currentTime);
+      }
+    });
+
+    audio.addEventListener('ended', () => {
+      if (audio.loop) {
+        audio.currentTime = 0;
+        audio.play();
+      } else {
+        showPaused();
+      }
+    });
+
+    function togglePlay() {
+      if (audio.paused) {
+        audio.play().then(showPlaying).catch(console.error);
+      } else {
+        audio.pause();
+        showPaused();
+      }
+    }
+
+    function showPlaying() {
+      svgPlay.style.display = 'none';
+      svgPause.style.display = 'block';
+    }
+
+    function showPaused() {
+      svgPlay.style.display = 'block';
+      svgPause.style.display = 'none';
+    }
+
+    function toggleLoop() {
+      audio.loop = !audio.loop;
+      if (audio.loop) {
+        loopBtn.innerText = "Repeat ∞";
+        loopBtn.classList.remove('off');
+      } else {
+        loopBtn.innerText = "Single 1x";
+        loopBtn.classList.add('off');
+      }
+    }
+
+    function applyRate(val) {
+      const r = parseFloat(val);
+      audio.playbackRate = r;
+      rateReadout.innerText = r.toFixed(2) + 'x';
+      fineSlider.value = r;
+
+      document.querySelectorAll('.rate-btn').forEach(b => {
+        if (Math.abs(parseFloat(b.innerText) - r) < 0.01) {
+          b.classList.add('active');
+        } else {
+          b.classList.remove('active');
+        }
+      });
+    }
+
+    function seekClick(e) {
+      const rect = trackBar.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const pct = Math.max(0, Math.min(1, clickX / rect.width));
+      if (!isNaN(audio.duration)) {
+        audio.currentTime = pct * audio.duration;
+      }
+    }
+
+    // Spacebar to play/pause
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlay();
+      }
+    });
+  </script>
+</body>
+</html>
