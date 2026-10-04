@@ -19,95 +19,176 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 40px 24px;
+      padding: 32px 24px;
+      overflow-x: hidden;
+      position: relative;
     }
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 480px;
-      margin: 0 auto;
+
+    /* Background Ambient Wave Visualizer Canvas */
+    #visualizer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.55;
+      mix-blend-mode: screen;
+    }
+
+    /* Infinite Marquee Ticker (LOOP LOOP LOOP...) */
+    .marquee-container {
+      position: relative;
+      z-index: 10;
       width: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
     }
-    .brand {
+    .marquee-wrapper {
+      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    }
+    .marquee-track {
+      display: inline-block;
+      white-space: nowrap;
+      animation: ticker 14s linear infinite;
+    }
+    .marquee-item {
       font-size: 11px;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
-      color: #666666;
-      font-weight: 600;
+      font-weight: 800;
+      color: #444444;
+      margin-right: 28px;
+      display: inline-block;
+      transition: color 0.3s;
     }
+    .marquee-track:hover .marquee-item {
+      color: #888888;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
     .loop-tag {
       font-size: 11px;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      padding: 4px 10px;
-      border: 1px solid #333333;
+      font-weight: 700;
+      padding: 5px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 4px;
       color: #ffffff;
       background: transparent;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+      margin-left: 20px;
+    }
+    .loop-tag:hover {
+      background: #ffffff;
+      color: #000000;
     }
     .loop-tag.off {
-      color: #555555;
+      color: #444444;
       border-color: #222222;
     }
+
+    /* Main UI Layer */
     .main-content {
-      max-width: 480px;
+      position: relative;
+      z-index: 10;
+      max-width: 520px;
       margin: 0 auto;
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 36px;
+      gap: 32px;
     }
+
     .track-meta {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
     }
     .track-title {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      text-transform: uppercase;
     }
     .track-artist {
-      font-size: 15px;
-      color: #888888;
+      font-size: 14px;
+      color: #777777;
       letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ffffff;
+      display: inline-block;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.2; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.4); }
+    }
+
+    /* Timeline */
     .timeline-wrap {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
-    .time-digits {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      color: #555555;
-    }
     .progress-track {
       width: 100%;
-      height: 2px;
-      background: #222222;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.1);
       position: relative;
       cursor: pointer;
       display: flex;
       align-items: center;
+      transition: height 0.15s ease;
+    }
+    .progress-track:hover {
+      height: 5px;
     }
     .progress-fill {
       height: 100%;
       background: #ffffff;
       width: 0%;
       pointer-events: none;
+      position: relative;
     }
+    .time-digits {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: #666666;
+    }
+
+    /* Core Controls */
     .controls-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-top: 10px;
+      gap: 16px;
+      flex-wrap: wrap;
     }
     .play-btn {
       width: 64px;
@@ -120,73 +201,135 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: transform 0.15s ease, background 0.15s ease;
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.15s ease;
+      flex-shrink: 0;
     }
     .play-btn:active {
-      transform: scale(0.95);
+      transform: scale(0.9);
     }
     .play-btn svg {
       width: 22px;
       height: 22px;
       fill: currentColor;
     }
+
+    /* Extreme Speed Selector */
     .rate-selector {
       display: flex;
       align-items: center;
       gap: 4px;
-      background: #111111;
-      border: 1px solid #222222;
-      border-radius: 6px;
-      padding: 3px;
+      background: #0d0d0d;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 4px;
     }
     .rate-btn {
       background: transparent;
       border: none;
-      color: #666666;
+      color: #555555;
       font-size: 12px;
-      font-weight: 600;
-      padding: 6px 12px;
-      border-radius: 4px;
+      font-weight: 700;
+      padding: 7px 11px;
+      border-radius: 5px;
       cursor: pointer;
       transition: all 0.15s ease;
       font-family: ui-monospace, monospace;
     }
     .rate-btn:hover {
-      color: #aaaaaa;
+      color: #ffffff;
     }
     .rate-btn.active {
-      background: #222222;
+      background: #ffffff;
+      color: #000000;
+    }
+
+    /* Ultra Speed Slider (0.1x ~ 4.0x) */
+    .slider-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .slider-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-family: ui-monospace, monospace;
+      color: #666666;
+    }
+    .slider-info strong {
+      font-size: 14px;
+      color: #ffffff;
+      letter-spacing: 0.02em;
+    }
+    .slider-info button {
+      background: transparent;
+      border: 1px solid #333333;
+      color: #777777;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .slider-info button:hover {
+      border-color: #888888;
       color: #ffffff;
     }
     .rate-slider-wrap {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 0 4px;
     }
-    .slider-label {
+    .slider-bound {
       font-size: 11px;
       color: #444444;
       font-family: ui-monospace, monospace;
-      width: 38px;
+      width: 32px;
     }
     input[type=range] {
       -webkit-appearance: none;
       width: 100%;
-      height: 2px;
-      background: #222222;
+      height: 3px;
+      background: #1a1a1a;
       outline: none;
+      cursor: pointer;
+      border-radius: 2px;
     }
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
       background: #ffffff;
       cursor: pointer;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+      transition: transform 0.1s ease;
     }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+
+    /* Soundwave Mini Bars */
+    .audio-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 2.5px;
+      height: 20px;
+    }
+    .bar {
+      width: 2.5px;
+      background: #333333;
+      border-radius: 1px;
+      height: 3px;
+      transition: height 0.08s ease, background 0.2s ease;
+    }
+
+    /* Footer */
     .bottom-bar {
-      max-width: 480px;
+      position: relative;
+      z-index: 10;
+      max-width: 520px;
       margin: 0 auto;
       width: 100%;
       display: flex;
@@ -194,8 +337,8 @@
       align-items: center;
       font-size: 11px;
       color: #444444;
-      border-top: 1px solid #141414;
-      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 18px;
     }
     .bottom-bar a {
       color: #666666;
@@ -209,53 +352,111 @@
 </head>
 <body>
 
-  <div class="top-bar">
-    <span class="brand">Loop Loop Loop Loop Loop Loop Loop</span>
+  <!-- Background Canvas Visualizer -->
+  <canvas id="visualizer"></canvas>
+
+  <!-- Top Marquee Ticker -->
+  <div class="marquee-container">
+    <div class="marquee-wrapper">
+      <div class="marquee-track" id="ticker-track">
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <!-- Duplicated for seamless CSS ticker -->
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+        <span class="marquee-item">LOOP</span>
+      </div>
+    </div>
     <button class="loop-tag" id="btn-loop-mode" onclick="toggleLoop()">Repeat ∞</button>
   </div>
 
+  <!-- Center Player Controls -->
   <div class="main-content">
     <div class="track-meta">
       <h1 class="track-title">MY EYES</h1>
-      <p class="track-artist">Travis Scott — Beat Drop Extended Edit</p>
+      <div class="track-artist">
+        <span class="pulse-dot" id="pulse-dot"></span>
+        <span>Travis Scott — Beat Drop Extended Edit</span>
+      </div>
     </div>
 
-    <!-- Hidden Native Audio -->
-    <audio id="audio" loop preload="auto" src="audio.m4a"></audio>
+    <!-- Hidden Native Audio Source -->
+    <audio id="audio" loop preload="auto" src="audio.m4a" crossorigin="anonymous"></audio>
 
+    <!-- Timeline Progress -->
     <div class="timeline-wrap">
       <div class="progress-track" id="track-bar" onclick="seekClick(event)">
         <div class="progress-fill" id="fill-bar"></div>
       </div>
       <div class="time-digits">
         <span id="t-cur">0:00</span>
+        <div class="audio-bars" id="audio-bars">
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          <div class="bar"></div><div class="bar"></div>
+        </div>
         <span id="t-dur">0:00</span>
       </div>
     </div>
 
+    <!-- Primary Control Buttons & Preset Range -->
     <div class="controls-row">
-      <button class="play-btn" id="play-trigger" onclick="togglePlay()" aria-label="Play">
+      <button class="play-btn" id="play-trigger" onclick="togglePlay()" aria-label="Play / Pause">
         <svg id="svg-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
         <svg id="svg-pause" viewBox="0 0 24 24" style="display: none;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
       </button>
 
+      <!-- Presets from Slow Chopped to Ultra Hyper -->
       <div class="rate-selector">
-        <button class="rate-btn" onclick="applyRate(0.75)">0.75</button>
-        <button class="rate-btn active" onclick="applyRate(1.0)">1.0</button>
-        <button class="rate-btn" onclick="applyRate(1.25)">1.25</button>
-        <button class="rate-btn" onclick="applyRate(1.5)">1.5</button>
-        <button class="rate-btn" onclick="applyRate(2.0)">2.0</button>
+        <button class="rate-btn" onclick="applyRate(0.25)">0.25x</button>
+        <button class="rate-btn" onclick="applyRate(0.5)">0.5x</button>
+        <button class="rate-btn active" onclick="applyRate(1.0)">1.0x</button>
+        <button class="rate-btn" onclick="applyRate(1.5)">1.5x</button>
+        <button class="rate-btn" onclick="applyRate(2.0)">2.0x</button>
+        <button class="rate-btn" onclick="applyRate(3.0)">3.0x</button>
+        <button class="rate-btn" onclick="applyRate(4.0)">4.0x</button>
       </div>
     </div>
 
-    <div class="rate-slider-wrap">
-      <span class="slider-label" id="rate-readout">1.00x</span>
-      <input type="range" id="fine-slider" min="0.5" max="2.0" step="0.05" value="1.0" oninput="applyRate(this.value)">
+    <!-- Extreme Fine-Tuning Speed Slider (0.1x ~ 4.0x) -->
+    <div class="slider-container">
+      <div class="slider-info">
+        <span>VARIABLE TEMPO CONTROL</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <strong id="rate-readout">1.00x</strong>
+          <button onclick="applyRate(1.0)">RESET</button>
+        </div>
+      </div>
+      <div class="rate-slider-wrap">
+        <span class="slider-bound">0.1x</span>
+        <input type="range" id="fine-slider" min="0.1" max="4.0" step="0.05" value="1.0" oninput="applyRate(this.value)">
+        <span class="slider-bound" style="text-align: right;">4.0x</span>
+      </div>
     </div>
   </div>
 
+  <!-- Bottom Link & Mode -->
   <div class="bottom-bar">
-    <span>Fair-use Personal Practice Tool</span>
+    <span>SPACE TO PLAY / PAUSE</span>
     <a href="https://www.youtube.com/watch?v=pxwm3sqAytE" target="_blank" rel="noreferrer">Original YouTube ↗</a>
   </div>
 
@@ -271,6 +472,75 @@
     const loopBtn = document.getElementById('btn-loop-mode');
     const rateReadout = document.getElementById('rate-readout');
     const fineSlider = document.getElementById('fine-slider');
+    const tickerTrack = document.getElementById('ticker-track');
+    const bars = document.querySelectorAll('.audio-bars .bar');
+    const canvas = document.getElementById('visualizer');
+    const ctx = canvas.getContext('2d');
+
+    let audioCtx, analyser, dataArray, source;
+    let isVisualizerReady = false;
+
+    // Resize canvas
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Setup Web Audio API on first interaction
+    function initAudioContext() {
+      if (isVisualizerReady) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 128;
+        source = audioCtx.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        isVisualizerReady = true;
+        renderVisualizer();
+      } catch (err) {
+        console.warn("Web Audio Visualizer fallback:", err);
+      }
+    }
+
+    // Dynamic wave visualizer motion
+    function renderVisualizer() {
+      requestAnimationFrame(renderVisualizer);
+      if (!isVisualizerReady) return;
+
+      analyser.getByteFrequencyData(dataArray);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (audio.paused) return;
+
+      const barCount = 48;
+      const width = canvas.width / barCount;
+      const centerY = canvas.height * 0.5;
+
+      for (let i = 0; i < barCount; i++) {
+        const val = dataArray[i % dataArray.length] / 255.0;
+        const barHeight = val * (canvas.height * 0.35);
+
+        const x = i * width;
+        const alpha = 0.05 + val * 0.25;
+
+        // Elegant minimalist monochromatic wave beams
+        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+        ctx.fillRect(x + 2, centerY - barHeight / 2, width - 4, barHeight);
+      }
+
+      // Mini soundbars in timeline
+      bars.forEach((b, idx) => {
+        const factor = (dataArray[idx * 3] || 10) / 255.0;
+        b.style.height = `${Math.max(3, factor * 18)}px`;
+        b.style.background = factor > 0.4 ? '#ffffff' : '#444444';
+      });
+    }
 
     function fmt(s) {
       if (isNaN(s)) return "0:00";
@@ -301,6 +571,10 @@
     });
 
     function togglePlay() {
+      initAudioContext();
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
       if (audio.paused) {
         audio.play().then(showPlaying).catch(console.error);
       } else {
@@ -317,6 +591,10 @@
     function showPaused() {
       svgPlay.style.display = 'block';
       svgPause.style.display = 'none';
+      bars.forEach(b => {
+        b.style.height = '3px';
+        b.style.background = '#333333';
+      });
     }
 
     function toggleLoop() {
@@ -330,14 +608,20 @@
       }
     }
 
+    // Extreme Tempo Engine: 0.1x (Extreme Slowed) to 4.0x (Nightcore Hyper)
     function applyRate(val) {
       const r = parseFloat(val);
       audio.playbackRate = r;
       rateReadout.innerText = r.toFixed(2) + 'x';
       fineSlider.value = r;
 
+      // Adjust ticker speed to match music tempo
+      tickerTrack.style.animationDuration = `${Math.max(2, 14 / r)}s`;
+
+      // Update preset highlights
       document.querySelectorAll('.rate-btn').forEach(b => {
-        if (Math.abs(parseFloat(b.innerText) - r) < 0.01) {
+        const btnVal = parseFloat(b.innerText);
+        if (Math.abs(btnVal - r) < 0.01) {
           b.classList.add('active');
         } else {
           b.classList.remove('active');
@@ -354,7 +638,7 @@
       }
     }
 
-    // Spacebar to play/pause
+    // Keyboard Spacebar play/pause
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space') {
         e.preventDefault();
